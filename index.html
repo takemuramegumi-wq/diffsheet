@@ -5,444 +5,417 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DiffSheet — リスト比較ツール</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Noto+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f0f0f;
-  --surface: #1a1a1a;
-  --surface2: #222;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --text: #f0ede8;
-  --text2: #888;
-  --text3: #555;
-  --accent: #c8f064;
-  --accent-dark: #9fbf3a;
-  --match: #4ade80;
-  --match-bg: rgba(74,222,128,0.1);
-  --miss: #f87171;
-  --miss-bg: rgba(248,113,113,0.1);
-  --extra: #fb923c;
-  --extra-bg: rgba(251,146,60,0.1);
-  --dup: #a78bfa;
-  --dup-bg: rgba(167,139,250,0.1);
-  --mono: 'DM Mono', monospace;
-  --serif: 'Shippori Mincho', serif;
-  --sans: 'DM Sans', sans-serif;
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface2: #f2f1ec;
+  --border: #dddbd4;
+  --border2: #c8c6be;
+  --text: #2d2d2d;
+  --text2: #6b6b6b;
+  --text3: #a0a0a0;
+  --accent: #5a7194;
+  --accent-hover: #4a6080;
+  --accent-light: #eef1f6;
+  --sub: #e8e6db;
+  --sub-dark: #cac8bc;
+  --match: #3a7d55;
+  --match-bg: #eaf4ee;
+  --miss: #b94040;
+  --miss-bg: #fdf0f0;
+  --extra: #8a6020;
+  --extra-bg: #fdf5e6;
+  --dup: #5a4090;
+  --dup-bg: #f2eefa;
+  --sans: 'Noto Sans JP', 'Noto Sans', sans-serif;
+  --radius: 8px;
 }
 
-html { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; }
+html { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; }
 body { min-height: 100vh; }
 
-/* Header */
 header {
-  padding: 2.5rem 2rem 1.5rem;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
+  padding: 1.25rem 2rem;
   display: flex;
-  align-items: flex-end;
-  gap: 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
+  align-items: center;
+  gap: 1.5rem;
 }
-.logo {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: -0.5px;
-  color: var(--accent);
-}
-.logo span { color: var(--text); }
-.tagline {
-  font-size: 13px;
-  color: var(--text2);
-  font-family: var(--serif);
-  padding-bottom: 2px;
-}
+.logo { font-size: 18px; font-weight: 500; color: var(--accent); letter-spacing: -0.3px; }
+.logo em { color: var(--text); font-style: normal; }
+.tagline { font-size: 12px; color: var(--text3); border-left: 1px solid var(--border); padding-left: 1.5rem; }
 
-/* Main layout */
-main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+main { max-width: 1080px; margin: 0 auto; padding: 1.75rem 2rem 3rem; }
 
-/* Upload section */
 .upload-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  align-items: start;
 }
-@media (max-width: 680px) { .upload-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .upload-grid { grid-template-columns: 1fr; } }
 
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.panel-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 1rem;
+.panel-header {
+  background: var(--sub);
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   gap: 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
-.panel-label::before {
-  content: '';
-  display: inline-block;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-.panel:nth-child(2) .panel-label::before { background: #60a5fa; }
+.panel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.panel:nth-child(2) .panel-dot { background: #7a9ab4; }
+.panel-title { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.3px; }
 
-/* Drop zone */
+.panel-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
 .drop-zone {
   border: 1.5px dashed var(--border2);
-  border-radius: 8px;
-  padding: 1.75rem 1rem;
-  text-align: center;
+  border-radius: var(--radius);
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: border-color .2s, background .2s;
+  transition: border-color .18s, background .18s;
+  flex-shrink: 0;
+  gap: 4px;
 }
-.drop-zone:hover, .drop-zone.over {
-  border-color: var(--accent);
-  background: rgba(200,240,100,0.04);
-}
-.drop-zone input[type=file] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
-.drop-icon {
-  width: 36px; height: 36px;
-  margin: 0 auto 10px;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-.drop-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
-.drop-hint { font-size: 11px; color: var(--text3); margin-top: 4px; font-family: var(--mono); }
+.drop-zone:hover, .drop-zone.over { border-color: var(--accent); background: var(--accent-light); }
+.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-icon { font-size: 20px; line-height: 1; }
+.drop-text { font-size: 12px; color: var(--text2); }
+.drop-hint { font-size: 11px; color: var(--text3); }
 
-/* File loaded state */
+/* File info: always visible */
 .file-info {
-  display: none;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 5px 8px;
   background: var(--surface2);
   border-radius: 6px;
   border: 1px solid var(--border);
+  height: 31px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
-.file-info-icon { font-size: 16px; }
-.file-info-name { font-size: 12px; font-family: var(--mono); color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.file-info-remove { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; }
-.file-info-remove:hover { color: var(--miss); }
+.fi-placeholder { font-size: 12px; color: var(--text3); }
+.fi-icon { font-size: 14px; display: none; }
+.fi-name { font-size: 12px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none; }
+.fi-remove { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 15px; padding: 0; line-height: 1; display: none; }
+.fi-remove:hover { color: var(--miss); }
+.file-info.loaded .fi-placeholder { display: none; }
+.file-info.loaded .fi-icon,
+.file-info.loaded .fi-name,
+.file-info.loaded .fi-remove { display: block; }
 
-/* Sheet + Column selectors */
-.selector-row {
-  display: none;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
-}
+/* Selectors: always visible */
+.selector-row { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 .selector-item { display: flex; align-items: center; gap: 10px; }
-.selector-item label { font-size: 11px; color: var(--text3); font-family: var(--mono); min-width: 52px; }
+.selector-item label { font-size: 11px; color: var(--text3); min-width: 52px; }
+
 select {
   flex: 1;
   background: var(--surface2);
-  border: 1px solid var(--border2);
+  border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text);
   font-family: var(--sans);
-  font-size: 13px;
-  padding: 6px 10px;
+  font-size: 12px;
+  padding: 5px 28px 5px 8px;
+  height: 31px;
   cursor: pointer;
   outline: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 30px;
+  background-position: right 8px center;
 }
-select:focus { border-color: var(--accent); }
-select option { background: #222; }
+select:disabled { opacity: 0.45; cursor: default; }
+select:focus { border-color: var(--accent); outline: none; }
 
-/* Preview */
-.preview-wrap { display: none; margin-top: 10px; }
-.preview-label { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 6px; }
+/* Preview: fixed height, always visible */
+.preview-section { flex-shrink: 0; }
+.preview-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
 .preview-scroll {
-  overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 6px;
-  max-height: 120px;
-  overflow-y: auto;
+  height: 100px;
+  overflow: auto;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.preview-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+.preview-scroll::-webkit-scrollbar { width: 3px; height: 3px; }
 .preview-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-.preview-scroll table { font-size: 11px; border-collapse: collapse; white-space: nowrap; width: 100%; font-family: var(--mono); }
-.preview-scroll th { padding: 5px 10px; background: var(--surface2); color: var(--text2); font-weight: 500; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
-.preview-scroll td { padding: 4px 10px; border-bottom: 1px solid var(--border); color: var(--text2); }
+.preview-empty { font-size: 11px; color: var(--text3); text-align: center; padding: 0 1rem; }
+.preview-scroll.has-data { display: block; }
+.preview-scroll table { font-size: 11px; border-collapse: collapse; white-space: nowrap; width: 100%; }
+.preview-scroll th { padding: 4px 10px; background: var(--sub); color: var(--text2); font-weight: 500; border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+.preview-scroll td { padding: 3px 10px; border-bottom: 1px solid var(--border); color: var(--text2); }
 .preview-scroll tr:last-child td { border-bottom: none; }
 
-/* Options */
 .options-row {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.25rem;
-  padding: 1rem 1.25rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  align-items: center;
+  display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem;
+  padding: 10px 14px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); align-items: center;
 }
-.options-row label {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--text2); cursor: pointer;
-}
-.options-row input[type=checkbox] {
-  width: 15px; height: 15px; cursor: pointer;
-  accent-color: var(--accent);
-}
+.options-row label { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text2); cursor: pointer; }
+.options-row input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
 
-/* Action bar */
-.action-bar { display: flex; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; align-items: center; }
+.action-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
 
 button {
-  font-family: var(--sans);
-  font-size: 13px;
-  cursor: pointer;
-  border-radius: 7px;
-  padding: 9px 20px;
-  transition: background .15s, opacity .15s, transform .1s;
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--text2);
+  font-family: var(--sans); font-size: 13px; cursor: pointer; border-radius: 6px;
+  padding: 8px 18px; transition: background .15s, border-color .15s, transform .1s;
+  border: 1px solid var(--border2); background: var(--surface); color: var(--text2);
 }
-button:hover { background: var(--surface); color: var(--text); }
+button:hover { background: var(--sub); color: var(--text); }
 button:active { transform: scale(0.98); }
-button:disabled { opacity: 0.35; cursor: default; }
-button.primary {
-  background: var(--accent);
-  color: #0f0f0f;
-  border-color: var(--accent);
-  font-weight: 500;
-}
-button.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
-button.primary:disabled { background: var(--border2); color: var(--text3); border-color: transparent; }
+button:disabled { opacity: 0.38; cursor: default; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
+button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+button.primary:disabled { background: var(--text3); border-color: var(--text3); }
 
-.msg { font-size: 12px; font-family: var(--mono); color: var(--text2); margin-left: auto; }
+.msg { font-size: 12px; color: var(--text3); margin-left: auto; }
 .msg.err { color: var(--miss); }
 .msg.ok { color: var(--match); }
 
-/* Stats */
-.stats {
+.export-wrap { position: relative; display: inline-block; }
+.export-wrap .export-menu {
   display: none;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 1.5rem;
-}
-@media (max-width: 500px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-.stat {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color .15s;
-}
-.stat:hover { border-color: var(--border2); }
-.stat.active-stat { border-color: currentColor; }
-.stat-num { font-size: 28px; font-weight: 300; display: block; font-family: var(--mono); }
-.stat-lbl { font-size: 11px; color: var(--text3); display: block; margin-top: 4px; font-family: var(--mono); letter-spacing: 0.5px; }
-.s-match { color: var(--match); }
-.s-miss  { color: var(--miss); }
-.s-extra { color: var(--extra); }
-.s-dup   { color: var(--dup); }
-
-/* Result table */
-#result-area { display: none; }
-.filter-bar {
-  display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;
-}
-.filter-btn {
-  font-size: 12px; padding: 5px 14px; font-family: var(--mono); border-radius: 20px;
-}
-.filter-btn.active {
-  background: var(--accent); color: #0f0f0f; border-color: var(--accent); font-weight: 500;
-}
-.copy-result-btn { margin-left: auto; font-size: 12px; padding: 5px 14px; }
-
-.tbl-wrap {
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
   overflow: hidden;
-  overflow-x: auto;
+  z-index: 100;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
+.export-wrap.open .export-menu { display: block; }
+.export-menu button {
+  display: block; width: 100%; text-align: left;
+  border: none; border-radius: 0; padding: 8px 14px;
+  font-size: 13px; color: var(--text2); background: var(--surface);
+}
+.export-menu button:hover { background: var(--sub); color: var(--text); }
+
+.stats { display: none; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 1.25rem; }
+@media (max-width: 500px) { .stats { grid-template-columns: repeat(2,1fr); } }
+.stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.stat:hover { background: var(--sub); }
+.stat.active-stat { border-color: currentColor; background: var(--sub); }
+.stat-num { font-size: 26px; font-weight: 400; display: block; }
+.stat-lbl { font-size: 11px; color: var(--text3); display: block; margin-top: 2px; }
+.s-match { color: var(--match); } .s-miss { color: var(--miss); }
+.s-extra { color: var(--extra); } .s-dup  { color: var(--dup); }
+
+#result-area { display: none; }
+.filter-bar { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+.filter-btn { font-size: 12px; padding: 5px 13px; border-radius: 20px; }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
+.copy-result-btn { margin-left: auto; font-size: 12px; padding: 5px 13px; }
+
+.tbl-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; overflow-x: auto; }
 table.res { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.res th {
-  text-align: left;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text3);
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface2);
-  font-family: var(--mono);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  white-space: nowrap;
+  text-align: left; font-size: 11px; font-weight: 500; color: var(--text2);
+  padding: 9px 12px; border-bottom: 1px solid var(--border); background: var(--sub); letter-spacing: 0.3px;
 }
 table.res td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text2);
-  font-family: var(--mono);
-  font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 320px;
+  padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px;
 }
 table.res tr:last-child td { border-bottom: none; }
-table.res tr:hover td { background: rgba(255,255,255,0.02); }
+table.res tr:hover td { background: var(--accent-light); }
 
-.badge {
-  display: inline-block; font-size: 10px; padding: 2px 8px;
-  border-radius: 20px; font-weight: 500; font-family: var(--mono); letter-spacing: 0.3px;
-}
+.badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
 .b-match { background: var(--match-bg); color: var(--match); }
 .b-miss  { background: var(--miss-bg);  color: var(--miss); }
 .b-extra { background: var(--extra-bg); color: var(--extra); }
 .b-dup   { background: var(--dup-bg);   color: var(--dup); }
 
-.empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 13px; font-family: var(--mono); }
+.empty { text-align: center; padding: 2.5rem; color: var(--text3); font-size: 13px; }
 
-/* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
-.panel { animation: fadeUp .3s ease both; }
-.panel:nth-child(2) { animation-delay: .06s; }
-.stats, #result-area { animation: fadeUp .25s ease both; }
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.feature-icon { font-size: 13px; line-height: 1; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Diff<span>Sheet</span></div>
+  <div class="logo">Diff<em>Sheet</em></div>
   <div class="tagline">スプレッドシート・リスト比較ツール</div>
 </header>
 
 <main>
 
+  <div class="features">
+    <div class="feature-item"><span class="feature-icon">📋</span>一致・不一致・重複を自動判定</div>
+    <div class="feature-item"><span class="feature-icon">📂</span>Excel・CSVをアップロードするだけ</div>
+    <div class="feature-item"><span class="feature-icon">🔍</span>比較列をプルダウンで指定</div>
+    <div class="feature-item"><span class="feature-icon">💾</span>結果をCSV出力・クリップボードにコピー</div>
+  </div>
+
   <div class="upload-grid">
 
-    <!-- List 1 -->
     <div class="panel">
-      <div class="panel-label">リスト 1 ― 基準</div>
-      <div class="drop-zone" id="dz1" ondragover="onDragOver(event,1)" ondragleave="onDragLeave(1)" ondrop="onDrop(event,1)">
-        <input type="file" accept=".xlsx,.xls,.csv" onchange="onFile(event,1)">
-        <div class="drop-icon">📂</div>
-        <div class="drop-text">クリックまたはドラッグ&amp;ドロップ</div>
-        <div class="drop-hint">.xlsx / .xls / .csv</div>
+      <div class="panel-header">
+        <div class="panel-dot"></div>
+        <div class="panel-title">リスト 1 ― 基準</div>
       </div>
-      <div class="file-info" id="fi1">
-        <span class="file-info-icon">📄</span>
-        <span class="file-info-name" id="fn1"></span>
-        <button class="file-info-remove" onclick="removeFile(1)" title="削除">×</button>
-      </div>
-      <div class="selector-row" id="sr1">
-        <div class="selector-item" id="si-sheet1" style="display:none">
-          <label>シート</label>
-          <select id="ss1" onchange="onSheetChange(1)"></select>
+      <div class="panel-body">
+        <div class="drop-zone" id="dz1" ondragover="onDragOver(event,1)" ondragleave="onDragLeave(1)" ondrop="onDrop(event,1)">
+          <input type="file" accept=".xlsx,.xls,.csv" onchange="onFile(event,1)">
+          <div class="drop-icon">📂</div>
+          <div class="drop-text">クリックまたはドラッグ&amp;ドロップ</div>
+          <div class="drop-hint">.xlsx / .xls / .csv</div>
         </div>
-        <div class="selector-item">
-          <label>比較列</label>
-          <select id="sc1"></select>
+        <div class="selector-row">
+          <div class="selector-item">
+            <label>ファイル名</label>
+            <div class="file-info" id="fi1" style="flex:1;margin:0;">
+              <span class="fi-placeholder">ファイルアップロード後、ここにファイル名が表示されます</span>
+              <span class="fi-icon">📄</span>
+              <span class="fi-name" id="fn1"></span>
+              <button class="fi-remove" onclick="removeFile(1)" title="削除">×</button>
+            </div>
+          </div>
+          <div class="selector-item" id="si-sheet1" style="display:none">
+            <label>シート</label>
+            <select id="ss1" onchange="onSheetChange(1)"></select>
+          </div>
+          <div class="selector-item">
+            <label>比較列</label>
+            <select id="sc1" disabled><option>ファイルアップロード後ここで比較列を選択できます</option></select>
+          </div>
         </div>
-      </div>
-      <div class="preview-wrap" id="pw1">
-        <div class="preview-label">プレビュー（先頭5行）</div>
-        <div class="preview-scroll" id="pv1"></div>
+        <div class="preview-section">
+          <div class="preview-label">プレビュー（先頭5行）</div>
+          <div class="preview-scroll" id="pv1">
+            <span class="preview-empty">ファイルをアップロードするとここに表示されます</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- List 2 -->
     <div class="panel">
-      <div class="panel-label">リスト 2 ― 比較対象</div>
-      <div class="drop-zone" id="dz2" ondragover="onDragOver(event,2)" ondragleave="onDragLeave(2)" ondrop="onDrop(event,2)">
-        <input type="file" accept=".xlsx,.xls,.csv" onchange="onFile(event,2)">
-        <div class="drop-icon">📂</div>
-        <div class="drop-text">クリックまたはドラッグ&amp;ドロップ</div>
-        <div class="drop-hint">.xlsx / .xls / .csv</div>
+      <div class="panel-header">
+        <div class="panel-dot"></div>
+        <div class="panel-title">リスト 2 ― 比較対象</div>
       </div>
-      <div class="file-info" id="fi2">
-        <span class="file-info-icon">📄</span>
-        <span class="file-info-name" id="fn2"></span>
-        <button class="file-info-remove" onclick="removeFile(2)" title="削除">×</button>
-      </div>
-      <div class="selector-row" id="sr2">
-        <div class="selector-item" id="si-sheet2" style="display:none">
-          <label>シート</label>
-          <select id="ss2" onchange="onSheetChange(2)"></select>
+      <div class="panel-body">
+        <div class="drop-zone" id="dz2" ondragover="onDragOver(event,2)" ondragleave="onDragLeave(2)" ondrop="onDrop(event,2)">
+          <input type="file" accept=".xlsx,.xls,.csv" onchange="onFile(event,2)">
+          <div class="drop-icon">📂</div>
+          <div class="drop-text">クリックまたはドラッグ&amp;ドロップ</div>
+          <div class="drop-hint">.xlsx / .xls / .csv</div>
         </div>
-        <div class="selector-item">
-          <label>比較列</label>
-          <select id="sc2"></select>
+        <div class="selector-row">
+          <div class="selector-item">
+            <label>ファイル名</label>
+            <div class="file-info" id="fi2" style="flex:1;margin:0;">
+              <span class="fi-placeholder">ファイルアップロード後、ここにファイル名が表示されます</span>
+              <span class="fi-icon">📄</span>
+              <span class="fi-name" id="fn2"></span>
+              <button class="fi-remove" onclick="removeFile(2)" title="削除">×</button>
+            </div>
+          </div>
+          <div class="selector-item" id="si-sheet2" style="display:none">
+            <label>シート</label>
+            <select id="ss2" onchange="onSheetChange(2)"></select>
+          </div>
+          <div class="selector-item">
+            <label>比較列</label>
+            <select id="sc2" disabled><option>ファイルアップロード後ここで比較列を選択できます</option></select>
+          </div>
         </div>
-      </div>
-      <div class="preview-wrap" id="pw2">
-        <div class="preview-label">プレビュー（先頭5行）</div>
-        <div class="preview-scroll" id="pv2"></div>
+        <div class="preview-section">
+          <div class="preview-label">プレビュー（先頭5行）</div>
+          <div class="preview-scroll" id="pv2">
+            <span class="preview-empty">ファイルをアップロードするとここに表示されます</span>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Options -->
   <div class="options-row">
     <label><input type="checkbox" id="ignoreCase"> 大文字/小文字を区別しない</label>
     <label><input type="checkbox" id="ignoreSpace" checked> 前後の空白を無視する</label>
     <label><input type="checkbox" id="showExtra" checked> リスト2のみの項目も表示</label>
   </div>
 
-  <!-- Action bar -->
   <div class="action-bar">
     <button class="primary" id="cmpBtn" onclick="compare()" disabled>比較する</button>
-    <button id="csvBtn" onclick="exportCSV()" disabled>CSV 出力</button>
+    <div class="export-wrap" id="exportWrap">
+      <button id="csvBtn" onclick="toggleExportMenu()" disabled>出力 ▾</button>
+      <div class="export-menu" id="exportMenu">
+        <button onclick="exportFile('csv')">📄 CSV形式</button>
+        <button onclick="exportFile('xlsx')">📊 Excel形式</button>
+      </div>
+    </div>
     <button onclick="clearAll()">クリア</button>
     <span class="msg" id="msg"></span>
   </div>
 
-  <!-- Stats -->
   <div class="stats" id="stats">
     <div class="stat s-match" id="stat-match" onclick="setFilter('match')">
-      <span class="stat-num" id="sMatch">0</span>
-      <span class="stat-lbl">一致</span>
+      <span class="stat-num" id="sMatch">0</span><span class="stat-lbl">一致</span>
     </div>
     <div class="stat s-miss" id="stat-miss" onclick="setFilter('miss')">
-      <span class="stat-num" id="sMiss">0</span>
-      <span class="stat-lbl">リスト1のみ</span>
+      <span class="stat-num" id="sMiss">0</span><span class="stat-lbl">リスト1のみ</span>
     </div>
     <div class="stat s-extra" id="stat-extra" onclick="setFilter('extra')">
-      <span class="stat-num" id="sExtra">0</span>
-      <span class="stat-lbl">リスト2のみ</span>
+      <span class="stat-num" id="sExtra">0</span><span class="stat-lbl">リスト2のみ</span>
     </div>
     <div class="stat s-dup" id="stat-dup" onclick="setFilter('dup')">
-      <span class="stat-num" id="sDup">0</span>
-      <span class="stat-lbl">重複</span>
+      <span class="stat-num" id="sDup">0</span><span class="stat-lbl">重複</span>
     </div>
   </div>
 
-  <!-- Results -->
   <div id="result-area">
     <div class="filter-bar">
       <button class="filter-btn active" id="fb-all" onclick="setFilter('all')">すべて</button>
@@ -485,12 +458,11 @@ function readFile(file, n) {
       const wb = XLSX.read(data, { type: 'array' });
       state[n].wb = wb;
       document.getElementById('fn' + n).textContent = file.name;
-      document.getElementById('fi' + n).style.display = 'flex';
+      document.getElementById('fi' + n).classList.add('loaded');
       const si = document.getElementById('si-sheet' + n);
       const ss = document.getElementById('ss' + n);
       ss.innerHTML = wb.SheetNames.map(s => `<option value="${s}">${s}</option>`).join('');
       si.style.display = wb.SheetNames.length > 1 ? 'flex' : 'none';
-      document.getElementById('sr' + n).style.display = 'flex';
       loadSheet(n, wb.SheetNames[0]);
     } catch (err) { setMsg('読み込みエラー: ' + err.message, 'err'); }
   };
@@ -504,28 +476,34 @@ function loadSheet(n, sheetName) {
   const headers = data[0] || [];
   const sc = document.getElementById('sc' + n);
   sc.innerHTML = headers.map((h, i) => `<option value="${i}">${h || '列' + (i + 1)}</option>`).join('');
+  sc.disabled = false;
   renderPreview(n, data, headers);
   checkReady();
 }
 
-function onSheetChange(n) {
-  loadSheet(n, document.getElementById('ss' + n).value);
-}
+function onSheetChange(n) { loadSheet(n, document.getElementById('ss' + n).value); }
 
 function renderPreview(n, data, headers) {
   const rows = data.slice(1, 6);
+  const pv = document.getElementById('pv' + n);
   let html = `<table><thead><tr>${headers.map(h => `<th>${esc(String(h))}</th>`).join('')}</tr></thead><tbody>`;
   rows.forEach(r => { html += `<tr>${headers.map((_, i) => `<td>${esc(String(r[i] ?? ''))}</td>`).join('')}</tr>`; });
   html += '</tbody></table>';
-  document.getElementById('pv' + n).innerHTML = html;
-  document.getElementById('pw' + n).style.display = 'block';
+  pv.innerHTML = html;
+  pv.classList.add('has-data');
 }
 
 function removeFile(n) {
   state[n] = { wb: null, data: null };
-  document.getElementById('fi' + n).style.display = 'none';
-  document.getElementById('sr' + n).style.display = 'none';
-  document.getElementById('pw' + n).style.display = 'none';
+  document.getElementById('fi' + n).classList.remove('loaded');
+  document.getElementById('fn' + n).textContent = '';
+  document.getElementById('si-sheet' + n).style.display = 'none';
+  const sc = document.getElementById('sc' + n);
+  sc.innerHTML = '<option>ファイルアップロード後ここで比較列を選択できます</option>';
+  sc.disabled = true;
+  const pv = document.getElementById('pv' + n);
+  pv.innerHTML = '<span class="preview-empty">ファイルをアップロードするとここに表示されます</span>';
+  pv.classList.remove('has-data');
   document.getElementById('dz' + n).querySelector('input').value = '';
   checkReady();
   hideResults();
@@ -583,12 +561,8 @@ function compare() {
 
 function setFilter(f) {
   curFilter = f;
-  ['all', 'match', 'miss', 'extra', 'dup'].forEach(id => {
-    document.getElementById('fb-' + id).classList.toggle('active', id === f);
-  });
-  ['match', 'miss', 'extra', 'dup'].forEach(id => {
-    document.getElementById('stat-' + id).classList.toggle('active-stat', id === f);
-  });
+  ['all','match','miss','extra','dup'].forEach(id => document.getElementById('fb-' + id).classList.toggle('active', id === f));
+  ['match','miss','extra','dup'].forEach(id => document.getElementById('stat-' + id).classList.toggle('active-stat', id === f));
   renderTable();
 }
 
@@ -599,18 +573,39 @@ function renderTable() {
   const labels = { match: '一致', miss: 'リスト1のみ', extra: 'リスト2のみ', dup: '重複' };
   const cls = { match: 'b-match', miss: 'b-miss', extra: 'b-extra', dup: 'b-dup' };
   tbody.innerHTML = rows.map(r =>
-    `<tr><td title="${esc(r.val)}">${r.val || '<span style="opacity:.3">—</span>'}</td><td><span class="badge ${cls[r.status]}">${labels[r.status]}</span></td><td title="${esc(r.l2val)}" style="opacity:.7">${r.l2val || '<span style="opacity:.4">—</span>'}</td></tr>`
+    `<tr><td title="${esc(r.val)}">${r.val || '<span style="opacity:.35">—</span>'}</td><td><span class="badge ${cls[r.status]}">${labels[r.status]}</span></td><td title="${esc(r.l2val)}">${r.l2val || '<span style="opacity:.35">—</span>'}</td></tr>`
   ).join('');
 }
 
-function exportCSV() {
+function toggleExportMenu() {
+  if (document.getElementById('csvBtn').disabled) return;
+  document.getElementById('exportWrap').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('exportWrap').contains(e.target)) {
+    document.getElementById('exportWrap').classList.remove('open');
+  }
+});
+
+function exportFile(format) {
+  document.getElementById('exportWrap').classList.remove('open');
   if (!allRows.length) return;
   const labels = { match: '一致', miss: 'リスト1のみ', extra: 'リスト2のみ', dup: '重複' };
-  const bom = '\uFEFF';
-  const header = 'リスト1の値,判定,リスト2での値\n';
-  const body = allRows.map(r => `"${r.val}","${labels[r.status]}","${r.l2val}"`).join('\n');
-  const blob = new Blob([bom + header + body], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'diffsheet_result.csv'; a.click();
+  if (format === 'csv') {
+    const bom = '\uFEFF';
+    const header = 'リスト1の値,判定,リスト2での値\n';
+    const body = allRows.map(r => `"${r.val}","${labels[r.status]}","${r.l2val}"`).join('\n');
+    const blob = new Blob([bom + header + body], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'diffsheet_result.csv'; a.click();
+  } else {
+    const wsData = [['リスト1の値', '判定', 'リスト2での値']].concat(
+      allRows.map(r => [r.val, labels[r.status], r.l2val])
+    );
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '比較結果');
+    XLSX.writeFile(wb, 'diffsheet_result.xlsx');
+  }
 }
 
 function copyResults() {
@@ -628,10 +623,7 @@ function hideResults() {
   allRows = [];
 }
 
-function clearAll() {
-  [1, 2].forEach(n => removeFile(n));
-  setMsg('');
-}
+function clearAll() { [1, 2].forEach(n => removeFile(n)); setMsg(''); }
 
 function setMsg(t, type) {
   const el = document.getElementById('msg');
